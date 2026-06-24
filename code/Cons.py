@@ -46,6 +46,7 @@ ENTITY_HEALTH = {
     'Missile': 1,
     'Enemy1': 1,
     'Enemy2': 1,
+    'Explosion': 1,
 }
 
 # =========================

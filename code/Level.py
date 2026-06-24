@@ -20,6 +20,7 @@ from code.Cons import (
 from code.EntityFactory import EntityFactory
 from code.Enemy import Enemy
 from code.Missile import Missile
+from code.Explosion import Explosion
 
 
 class Level:
@@ -41,17 +42,15 @@ class Level:
         self.game_over = False
         self.win = False
 
-        # Sons
         self.shoot_sound = pygame.mixer.Sound('./asset/Shoot.wav')
         self.explosion_sound = pygame.mixer.Sound('./asset/Explosion.wav')
 
-        self.shoot_sound.set_volume(0.3)
-        self.explosion_sound.set_volume(0.3)
+        self.shoot_sound.set_volume(0.15)
+        self.explosion_sound.set_volume(0.80)
 
     def run(self):
-        # Música de fundo
         pygame.mixer.music.load('./asset/Level1.mp3')
-        pygame.mixer.music.set_volume(0.4)
+        pygame.mixer.music.set_volume(0.20)
         pygame.mixer.music.play(-1)
 
         pygame.time.set_timer(ENEMY_EVENT, SPAWN_TIME)
@@ -95,7 +94,6 @@ class Level:
                     self.window.blit(ent.surf, ent.rect)
 
             self.draw_hud()
-
             pygame.display.flip()
 
     def check_collisions(self):
@@ -105,7 +103,11 @@ class Level:
 
             if isinstance(ent, Missile):
 
-                if ent.rect.bottom < 0 or ent.rect.right < 0 or ent.rect.left > WIN_WIDTH:
+                if (
+                    ent.rect.bottom < 0
+                    or ent.rect.right < 0
+                    or ent.rect.left > WIN_WIDTH
+                ):
                     remove_list.append(ent)
 
                 for enemy in self.entity_list:
@@ -118,19 +120,29 @@ class Level:
 
                             if enemy.health <= 0:
                                 self.explosion_sound.play()
+
+                                self.entity_list.append(
+                                    Explosion('Explosion', enemy.rect.center)
+                                )
+
                                 remove_list.append(enemy)
 
                                 if enemy.name == 'Enemy1':
-                                    self.score += 100
+                                    self.score += 250
 
                                 elif enemy.name == 'Enemy2':
-                                    self.score += 500
+                                    self.score += 1000
 
             if isinstance(ent, Enemy):
 
                 if ent.rect.top > WINDOW_HEIGHT:
                     remove_list.append(ent)
                     self.base_health -= 1
+
+            if isinstance(ent, Explosion):
+
+                if ent.health <= 0:
+                    remove_list.append(ent)
 
         for ent in remove_list:
             if ent in self.entity_list:
