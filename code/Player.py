@@ -17,7 +17,7 @@ from code.Cons import (
 
 class Player(Entity):
     def __init__(self, name: str, position: tuple):
-        self.direction = DIR_CENTER  # começa no Player_2
+        self.direction = DIR_CENTER
 
         super().__init__(name, position)
 
@@ -66,11 +66,20 @@ class Player(Entity):
 
         if keys[PLAYER_KEY_SHOOT] and self.shoot_delay >= 15:
             self.shoot_delay = 0
+
             angle = MISSILE_ANGLES[self.direction]
+
+            missile_positions = {
+                0: (self.rect.centerx - 34, self.rect.top + 28),
+                1: (self.rect.centerx - 20, self.rect.top + 10),
+                2: (self.rect.centerx, self.rect.top + 5),
+                3: (self.rect.centerx + 20, self.rect.top + 10),
+                4: (self.rect.centerx + 34, self.rect.top + 28),
+            }
 
             return Missile(
                 'Missile',
-                (self.rect.centerx, self.rect.top + 10),
+                missile_positions[self.direction],
                 angle
             )
 

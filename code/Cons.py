@@ -45,7 +45,7 @@ ENTITY_HEALTH = {
     'Player': 100,
     'Missile': 1,
     'Enemy1': 1,
-    'Enemy2': 5,
+    'Enemy2': 1,
 }
 
 # =========================
@@ -74,11 +74,11 @@ DIR_RIGHT = 4
 # acompanhando a direção da torre.
 
 MISSILE_ANGLES = {
-    DIR_LEFT: (-7, -8),
-    DIR_CENTER_LEFT: (-4, -9),
-    DIR_CENTER: (0, -10),
-    DIR_CENTER_RIGHT: (4, -9),
-    DIR_RIGHT: (7, -8),
+    DIR_LEFT: 135,
+    DIR_CENTER_LEFT: 115,
+    DIR_CENTER: 90,
+    DIR_CENTER_RIGHT: 65,
+    DIR_RIGHT: 45,
 }
 
 # =========================
