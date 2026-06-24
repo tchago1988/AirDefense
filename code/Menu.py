@@ -6,6 +6,7 @@ import pygame
 
 from code.Cons import (
     WIN_WIDTH,
+    WINDOW_HEIGHT,
     COLOR_WHITE,
     COLOR_YELLOW,
     COLOR_GREEN,
@@ -19,27 +20,46 @@ class Menu:
         self.window = window
         self.option = 0
 
+        self.background = pygame.image.load('./asset/MenuBackground.png').convert()
+        self.background = pygame.transform.scale(
+            self.background,
+            (WIN_WIDTH, WINDOW_HEIGHT)
+        )
+
     def run(self):
         clock = pygame.time.Clock()
 
         while True:
             clock.tick(60)
 
-            self.window.fill((10, 20, 30))
-
-            self.draw_text('COASTAL AIR DEFENSE', 42, COLOR_YELLOW, (60, 120))
-            self.draw_text('A/D - P1 gira | SPACE - P1 atira', 18, COLOR_WHITE, (120, 190))
-            self.draw_text('SETAS - P2 gira | ENTER - P2 atira', 18, COLOR_WHITE, (105, 220))
+            self.window.blit(self.background, (0, 0))
 
             for i, option in enumerate(MENU_OPTION):
-                color = COLOR_GREEN if i == self.option else COLOR_WHITE
+                if i == self.option:
+                    color = COLOR_GREEN
+                    text = f'> {option}'
+                else:
+                    color = COLOR_WHITE
+                    text = f'  {option}'
 
-                if option == 'EXIT':
-                    color = COLOR_RED if i == self.option else COLOR_WHITE
+                if option == 'EXIT' and i == self.option:
+                    color = COLOR_RED
 
-                self.draw_text(option, 34, color, (190, 330 + i * 60))
+                self.draw_text(text, 38, color, (175, 330 + i * 70))
 
-            self.draw_text('UP/DOWN - Navegar | ENTER - Confirmar', 18, COLOR_WHITE, (105, 650))
+            self.draw_text(
+                'UP / DOWN - NAVEGAR',
+                18,
+                COLOR_WHITE,
+                (155, 675)
+            )
+
+            self.draw_text(
+                'ENTER - CONFIRMAR',
+                18,
+                COLOR_YELLOW,
+                (180, 705)
+            )
 
             pygame.display.flip()
 

@@ -37,7 +37,9 @@ class Level:
         self.window = window
         self.game_mode = game_mode
 
-        self.background_file = './asset/Background.png' if game_mode == 1 else './asset/Background1.png'
+        self.background_file = './asset/Background.png' \
+            if game_mode == 1 \
+            else './asset/Background1.png'
 
         self.background = pygame.image.load(self.background_file).convert()
         self.background = pygame.transform.scale(
