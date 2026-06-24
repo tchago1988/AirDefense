@@ -1,39 +1,77 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import pygame
 
 from code.Entity import Entity
-from code.Cons import WIN_WIDTH, WINDOW_HEIGHT, ENTITY_SPEED, PLAYER_KEY_LEFT, PLAYER_KEY_RIGHT, PLAYER_KEY_SHOOT
 from code.Missile import Missile
+from code.Cons import (
+    WIN_WIDTH,
+    PLAYER_KEY_ROTATE_LEFT,
+    PLAYER_KEY_ROTATE_RIGHT,
+    PLAYER_KEY_SHOOT,
+    DIR_CENTER,
+    MISSILE_ANGLES
+)
 
 
 class Player(Entity):
     def __init__(self, name: str, position: tuple):
+        self.direction = DIR_CENTER  # começa no Player_2
+
         super().__init__(name, position)
 
-        self.surf = pygame.transform.scale(self.surf, (80, 80))
-        self.rect = self.surf.get_rect(left=position[0], top=position[1])
-
         self.shoot_delay = 0
+        self.rotate_delay = 0
+
+        self.load_sprite()
+
+        self.rect.centerx = WIN_WIDTH // 2
+        self.rect.centery = 620
+
+    def load_sprite(self):
+        center = self.rect.center if hasattr(self, 'rect') else (WIN_WIDTH // 2, 620)
+
+        self.surf = pygame.image.load(
+            f'./asset/Player_{self.direction}.png'
+        ).convert_alpha()
+
+        self.surf = pygame.transform.scale(self.surf, (96, 96))
+        self.rect = self.surf.get_rect(center=center)
 
     def move(self):
-        pressed_key = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
 
-        if pressed_key[PLAYER_KEY_LEFT] and self.rect.left > 0:
-            self.rect.centerx -= ENTITY_SPEED[self.name]
+        self.rotate_delay += 1
 
-        if pressed_key[PLAYER_KEY_RIGHT] and self.rect.right < WIN_WIDTH:
-            self.rect.centerx += ENTITY_SPEED[self.name]
+        if self.rotate_delay >= 10:
+            if keys[PLAYER_KEY_ROTATE_LEFT]:
+                if self.direction > 0:
+                    self.direction -= 1
+                    self.load_sprite()
+                self.rotate_delay = 0
 
-        self.rect.bottom = WINDOW_HEIGHT - 20
+            elif keys[PLAYER_KEY_ROTATE_RIGHT]:
+                if self.direction < 4:
+                    self.direction += 1
+                    self.load_sprite()
+                self.rotate_delay = 0
+
+        self.rect.centerx = WIN_WIDTH // 2
+        self.rect.centery = 620
 
     def shoot(self):
         self.shoot_delay += 1
+        keys = pygame.key.get_pressed()
 
-        pressed_key = pygame.key.get_pressed()
-
-        if pressed_key[PLAYER_KEY_SHOOT] and self.shoot_delay >= 15:
+        if keys[PLAYER_KEY_SHOOT] and self.shoot_delay >= 15:
             self.shoot_delay = 0
-            return Missile('Missile', (self.rect.centerx - 8, self.rect.top - 20))
+            angle = MISSILE_ANGLES[self.direction]
+
+            return Missile(
+                'Missile',
+                (self.rect.centerx, self.rect.top + 10),
+                angle
+            )
 
         return None

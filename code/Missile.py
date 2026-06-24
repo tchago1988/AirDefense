@@ -1,16 +1,25 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import pygame
+
 from code.Entity import Entity
-from code.Cons import ENTITY_SPEED
 
 
 class Missile(Entity):
-    def __init__(self, name: str, position: tuple):
+
+    def __init__(self, name: str, position: tuple, angle: tuple):
+
         super().__init__(name, position)
 
-        self.surf = pygame.transform.scale(self.surf, (16, 32))
-        self.rect = self.surf.get_rect(left=position[0], top=position[1])
+        self.surf = pygame.transform.scale(self.surf,(72, 120))
+
+        self.rect = self.surf.get_rect(center=position)
+
+        self.x_speed = angle[0]
+        self.y_speed = angle[1]
 
     def move(self):
-        self.rect.centery -= ENTITY_SPEED[self.name]
+
+        self.rect.centerx += self.x_speed
+        self.rect.centery += self.y_speed

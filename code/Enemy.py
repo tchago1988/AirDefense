@@ -11,10 +11,10 @@ class Enemy(Entity):
         super().__init__(name, position)
 
         if self.name == 'Enemy1':
-            self.surf = pygame.transform.scale(self.surf, (64, 64))
+            self.surf = pygame.transform.scale(self.surf,(96, 96))
 
         elif self.name == 'Enemy2':
-            self.surf = pygame.transform.scale(self.surf, (96, 96))
+            self.surf = pygame.transform.scale(self.surf,(70, 70))
 
         self.rect = self.surf.get_rect(left=position[0], top=position[1])
 
