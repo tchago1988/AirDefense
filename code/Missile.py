@@ -8,15 +8,14 @@ from code.Entity import Entity
 
 
 class Missile(Entity):
-    def __init__(self, name: str, position: tuple, angle_degrees: int):
+    def __init__(self, name: str, position: tuple, angle_degrees: int, owner: str):
         super().__init__(name, position)
 
+        self.owner = owner
         self.speed = 10
         self.angle_degrees = angle_degrees
 
-        self.surf = pygame.transform.scale(self.surf, (24, 48))
-
-        # Rotaciona a imagem do míssil para apontar na direção correta
+        self.surf = pygame.transform.scale(self.surf, (28, 56))
         self.surf = pygame.transform.rotate(self.surf, self.angle_degrees - 90)
 
         self.rect = self.surf.get_rect(center=position)

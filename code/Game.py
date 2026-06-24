@@ -4,6 +4,7 @@
 import pygame
 
 from code.Cons import WIN_WIDTH, WINDOW_HEIGHT
+from code.Menu import Menu
 from code.Level import Level
 
 
@@ -16,5 +17,9 @@ class Game:
         pygame.display.set_caption('Coastal Air Defense')
 
     def run(self):
-        level = Level(self.window)
-        level.run()
+        while True:
+            menu = Menu(self.window)
+            game_mode = menu.run()
+
+            level = Level(self.window, game_mode)
+            level.run()

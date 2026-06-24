@@ -2,77 +2,46 @@
 # -*- coding: utf-8 -*-
 import pygame
 
-# =========================
-# WINDOW
-# =========================
-
 WIN_WIDTH = 576
 WINDOW_HEIGHT = 768
-
-# =========================
-# COLORS
-# =========================
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_YELLOW = (255, 255, 0)
 COLOR_RED = (255, 0, 0)
 COLOR_GREEN = (0, 255, 0)
+COLOR_BLUE = (0, 150, 255)
 COLOR_BLACK = (0, 0, 0)
 
-# =========================
-# EVENTS
-# =========================
+MENU_OPTION = (
+    '1 PLAYER',
+    '2 PLAYERS',
+    'EXIT',
+)
 
 ENEMY_EVENT = pygame.USEREVENT + 1
 SPAWN_TIME = 1200
-
-# =========================
-# SPEEDS
-# =========================
-
-ENTITY_SPEED = {
-    'Player': 5,
-    'Missile': 10,
-    'Enemy1': 3,
-    'Enemy2': 2,
-}
-
-# =========================
-# HEALTH
-# =========================
 
 ENTITY_HEALTH = {
     'Player': 100,
     'Missile': 1,
     'Enemy1': 1,
-    'Enemy2': 1,
+    'Enemy2': 3,
     'Explosion': 1,
 }
 
-# =========================
-# GAME RULES
-# =========================
+ENTITY_SPEED = {
+    'Enemy1': 3,
+    'Enemy2': 2,
+}
 
 BASE_HEALTH = 10
-WIN_SCORE = 8000
-
-# =========================
-# TURRET DIRECTIONS
-# =========================
+WIN_SCORE = 20000
 
 DIR_LEFT = 0
 DIR_CENTER_LEFT = 1
 DIR_CENTER = 2
 DIR_CENTER_RIGHT = 3
 DIR_RIGHT = 4
-
-# =========================
-# MISSILE TRAJECTORIES
-# =========================
-# (x_speed, y_speed)
-#
-# Mais reto para frente,
-# acompanhando a direção da torre.
 
 MISSILE_ANGLES = {
     DIR_LEFT: 135,
@@ -82,10 +51,10 @@ MISSILE_ANGLES = {
     DIR_RIGHT: 45,
 }
 
-# =========================
-# CONTROLS
-# =========================
+PLAYER1_ROTATE_LEFT = pygame.K_a
+PLAYER1_ROTATE_RIGHT = pygame.K_d
+PLAYER1_SHOOT = pygame.K_SPACE
 
-PLAYER_KEY_ROTATE_LEFT = pygame.K_a
-PLAYER_KEY_ROTATE_RIGHT = pygame.K_d
-PLAYER_KEY_SHOOT = pygame.K_SPACE
+PLAYER2_ROTATE_LEFT = pygame.K_LEFT
+PLAYER2_ROTATE_RIGHT = pygame.K_RIGHT
+PLAYER2_SHOOT = pygame.K_RETURN

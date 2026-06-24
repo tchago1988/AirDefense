@@ -11,34 +11,82 @@ from code.Cons import (
     COLOR_WHITE,
     COLOR_GREEN,
     COLOR_RED,
+    COLOR_BLUE,
     ENEMY_EVENT,
     SPAWN_TIME,
     BASE_HEALTH,
-    WIN_SCORE
+    WIN_SCORE,
+    PLAYER1_ROTATE_LEFT,
+    PLAYER1_ROTATE_RIGHT,
+    PLAYER1_SHOOT,
+    PLAYER2_ROTATE_LEFT,
+    PLAYER2_ROTATE_RIGHT,
+    PLAYER2_SHOOT
 )
 
 from code.EntityFactory import EntityFactory
 from code.Enemy import Enemy
 from code.Missile import Missile
 from code.Explosion import Explosion
+from code.Player import Player
 
 
 class Level:
 
-    def __init__(self, window):
+    def __init__(self, window, game_mode):
         self.window = window
+        self.game_mode = game_mode
 
-        self.background = pygame.image.load('./asset/Background.png').convert()
+        self.background_file = './asset/Background.png' if game_mode == 1 else './asset/Background1.png'
+
+        self.background = pygame.image.load(self.background_file).convert()
         self.background = pygame.transform.scale(
             self.background,
             (WIN_WIDTH, WINDOW_HEIGHT)
         )
 
-        self.player = EntityFactory.get_entity('Player')
-        self.entity_list = [self.player]
+        self.players = []
+
+        if self.game_mode == 1:
+            self.players.append(
+                Player(
+                    (WIN_WIDTH // 2, 620),
+                    PLAYER1_ROTATE_LEFT,
+                    PLAYER1_ROTATE_RIGHT,
+                    PLAYER1_SHOOT,
+                    'P1'
+                )
+            )
+
+        else:
+            self.players.append(
+                Player(
+                    (180, 650),
+                    PLAYER1_ROTATE_LEFT,
+                    PLAYER1_ROTATE_RIGHT,
+                    PLAYER1_SHOOT,
+                    'P1'
+                )
+            )
+
+            self.players.append(
+                Player(
+                    (396, 650),
+                    PLAYER2_ROTATE_LEFT,
+                    PLAYER2_ROTATE_RIGHT,
+                    PLAYER2_SHOOT,
+                    'P2'
+                )
+            )
+
+        self.entity_list = []
+        self.entity_list.extend(self.players)
 
         self.score = 0
+        self.score_p1 = 0
+        self.score_p2 = 0
         self.base_health = BASE_HEALTH
+
         self.game_over = False
         self.win = False
 
@@ -71,30 +119,49 @@ class Level:
                     else:
                         self.entity_list.append(EntityFactory.get_entity('Enemy2'))
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.stop()
+                        return
+
             self.window.blit(self.background, (0, 0))
 
             if not self.game_over and not self.win:
-                self.player.move()
-
-                missile = self.player.shoot()
-
-                if missile:
-                    self.shoot_sound.play()
-                    self.entity_list.append(missile)
-
-                for ent in self.entity_list:
-                    ent.move()
-                    self.window.blit(ent.surf, ent.rect)
-
+                self.update_players()
+                self.update_entities()
                 self.check_collisions()
                 self.check_game_state()
 
             else:
-                for ent in self.entity_list:
-                    self.window.blit(ent.surf, ent.rect)
+                self.draw_entities()
+
+                keys = pygame.key.get_pressed()
+
+                if keys[pygame.K_RETURN]:
+                    pygame.mixer.music.stop()
+                    return
 
             self.draw_hud()
             pygame.display.flip()
+
+    def update_players(self):
+        for player in self.players:
+            player.move()
+
+            missile = player.shoot()
+
+            if missile:
+                self.shoot_sound.play()
+                self.entity_list.append(missile)
+
+    def update_entities(self):
+        for ent in self.entity_list:
+            ent.move()
+            self.window.blit(ent.surf, ent.rect)
+
+    def draw_entities(self):
+        for ent in self.entity_list:
+            self.window.blit(ent.surf, ent.rect)
 
     def check_collisions(self):
         remove_list = []
@@ -102,7 +169,6 @@ class Level:
         for ent in self.entity_list:
 
             if isinstance(ent, Missile):
-
                 if (
                     ent.rect.bottom < 0
                     or ent.rect.right < 0
@@ -112,35 +178,35 @@ class Level:
 
                 for enemy in self.entity_list:
 
-                    if isinstance(enemy, Enemy):
+                    if isinstance(enemy, Enemy) and ent.rect.colliderect(enemy.rect):
+                        remove_list.append(ent)
+                        enemy.health -= 1
 
-                        if ent.rect.colliderect(enemy.rect):
-                            remove_list.append(ent)
-                            enemy.health -= 1
+                        if enemy.health <= 0:
+                            self.explosion_sound.play()
 
-                            if enemy.health <= 0:
-                                self.explosion_sound.play()
+                            self.entity_list.append(
+                                Explosion('Explosion', enemy.rect.center)
+                            )
 
-                                self.entity_list.append(
-                                    Explosion('Explosion', enemy.rect.center)
-                                )
+                            remove_list.append(enemy)
 
-                                remove_list.append(enemy)
+                            points = 250 if enemy.name == 'Enemy1' else 1000
 
-                                if enemy.name == 'Enemy1':
-                                    self.score += 250
+                            self.score += points
 
-                                elif enemy.name == 'Enemy2':
-                                    self.score += 1000
+                            if ent.owner == 'P1':
+                                self.score_p1 += points
+
+                            elif ent.owner == 'P2':
+                                self.score_p2 += points
 
             if isinstance(ent, Enemy):
-
                 if ent.rect.top > WINDOW_HEIGHT:
                     remove_list.append(ent)
                     self.base_health -= 1
 
             if isinstance(ent, Explosion):
-
                 if ent.health <= 0:
                     remove_list.append(ent)
 
@@ -158,16 +224,24 @@ class Level:
             pygame.mixer.music.stop()
 
     def draw_hud(self):
-        self.draw_text(f'SCORE: {self.score}', (10, 10), COLOR_WHITE)
-        self.draw_text(f'BASE: {self.base_health}', (10, 35), COLOR_WHITE)
+        if self.game_mode == 1:
+            self.draw_text(f'SCORE: {self.score}', (10, 10), COLOR_WHITE)
+            self.draw_text(f'BASE: {self.base_health}', (10, 35), COLOR_WHITE)
+
+        else:
+            self.draw_text(f'P1: {self.score_p1}', (10, 10), COLOR_BLUE)
+            self.draw_text(f'P2: {self.score_p2}', (10, 35), COLOR_RED)
+            self.draw_text(f'BASE: {self.base_health}', (10, 60), COLOR_WHITE)
 
         if self.win:
             self.draw_text('MISSAO CUMPRIDA!', (145, WINDOW_HEIGHT // 2), COLOR_GREEN)
+            self.draw_text('ENTER - MENU', (190, WINDOW_HEIGHT // 2 + 40), COLOR_WHITE)
 
         if self.game_over:
             self.draw_text('BASE DESTRUIDA!', (145, WINDOW_HEIGHT // 2), COLOR_RED)
+            self.draw_text('ENTER - MENU', (190, WINDOW_HEIGHT // 2 + 40), COLOR_WHITE)
 
     def draw_text(self, text, pos, color):
-        font = pygame.font.SysFont('Arial', 22)
+        font = pygame.font.SysFont('Arial', 22, bold=True)
         surf = font.render(text, True, color)
         self.window.blit(surf, pos)

@@ -2,31 +2,39 @@
 # -*- coding: utf-8 -*-
 
 import pygame
+
 from code.Entity import Entity
 from code.Missile import Missile
-from code.Cons import (
-    WIN_WIDTH,
-    PLAYER_KEY_ROTATE_LEFT,
-    PLAYER_KEY_ROTATE_RIGHT,
-    PLAYER_KEY_SHOOT,
-    DIR_CENTER,
-    MISSILE_ANGLES
-)
+from code.Cons import DIR_CENTER, MISSILE_ANGLES
 
 
 class Player(Entity):
-    def __init__(self, name: str, position: tuple):
+    def __init__(
+            self,
+            position: tuple,
+            rotate_left_key,
+            rotate_right_key,
+            shoot_key,
+            label: str
+    ):
         self.direction = DIR_CENTER
 
-        super().__init__(name, position)
+        super().__init__('Player', position)
+
+        self.label = label
+        self.rotate_left_key = rotate_left_key
+        self.rotate_right_key = rotate_right_key
+        self.shoot_key = shoot_key
+
         self.shoot_delay = 0
         self.rotate_delay = 0
+
         self.load_sprite()
-        self.rect.centerx = WIN_WIDTH // 2
-        self.rect.centery = 620
+        self.rect.centerx = position[0]
+        self.rect.centery = position[1]
 
     def load_sprite(self):
-        center = self.rect.center if hasattr(self, 'rect') else (WIN_WIDTH // 2, 620)
+        center = self.rect.center if hasattr(self, 'rect') else (0, 0)
 
         self.surf = pygame.image.load(
             f'./asset/Player_{self.direction}.png'
@@ -41,26 +49,23 @@ class Player(Entity):
         self.rotate_delay += 1
 
         if self.rotate_delay >= 10:
-            if keys[PLAYER_KEY_ROTATE_LEFT]:
+            if keys[self.rotate_left_key]:
                 if self.direction > 0:
                     self.direction -= 1
                     self.load_sprite()
                 self.rotate_delay = 0
 
-            elif keys[PLAYER_KEY_ROTATE_RIGHT]:
+            elif keys[self.rotate_right_key]:
                 if self.direction < 4:
                     self.direction += 1
                     self.load_sprite()
                 self.rotate_delay = 0
 
-        self.rect.centerx = WIN_WIDTH // 2
-        self.rect.centery = 620
-
     def shoot(self):
         self.shoot_delay += 1
         keys = pygame.key.get_pressed()
 
-        if keys[PLAYER_KEY_SHOOT] and self.shoot_delay >= 15:
+        if keys[self.shoot_key] and self.shoot_delay >= 15:
             self.shoot_delay = 0
 
             angle = MISSILE_ANGLES[self.direction]
@@ -76,7 +81,8 @@ class Player(Entity):
             return Missile(
                 'Missile',
                 missile_positions[self.direction],
-                angle
+                angle,
+                self.label
             )
 
         return None
