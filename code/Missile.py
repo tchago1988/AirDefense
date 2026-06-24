@@ -17,10 +17,7 @@ class Missile(Entity):
         self.surf = pygame.transform.scale(self.surf, (24, 48))
 
         # Rotaciona a imagem do míssil para apontar na direção correta
-        self.surf = pygame.transform.rotate(
-            self.surf,
-            self.angle_degrees - 90
-        )
+        self.surf = pygame.transform.rotate(self.surf, self.angle_degrees - 90)
 
         self.rect = self.surf.get_rect(center=position)
 

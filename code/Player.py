@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-
 from code.Entity import Entity
 from code.Missile import Missile
 from code.Cons import (
@@ -20,12 +19,9 @@ class Player(Entity):
         self.direction = DIR_CENTER
 
         super().__init__(name, position)
-
         self.shoot_delay = 0
         self.rotate_delay = 0
-
         self.load_sprite()
-
         self.rect.centerx = WIN_WIDTH // 2
         self.rect.centery = 620
 

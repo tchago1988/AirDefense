@@ -41,7 +41,19 @@ class Level:
         self.game_over = False
         self.win = False
 
+        # Sons
+        self.shoot_sound = pygame.mixer.Sound('./asset/Shoot.wav')
+        self.explosion_sound = pygame.mixer.Sound('./asset/Explosion.wav')
+
+        self.shoot_sound.set_volume(0.3)
+        self.explosion_sound.set_volume(0.3)
+
     def run(self):
+        # Música de fundo
+        pygame.mixer.music.load('./asset/Level1.mp3')
+        pygame.mixer.music.set_volume(0.4)
+        pygame.mixer.music.play(-1)
+
         pygame.time.set_timer(ENEMY_EVENT, SPAWN_TIME)
 
         clock = pygame.time.Clock()
@@ -66,7 +78,9 @@ class Level:
                 self.player.move()
 
                 missile = self.player.shoot()
+
                 if missile:
+                    self.shoot_sound.play()
                     self.entity_list.append(missile)
 
                 for ent in self.entity_list:
@@ -88,25 +102,32 @@ class Level:
         remove_list = []
 
         for ent in self.entity_list:
+
             if isinstance(ent, Missile):
-                if ent.rect.bottom < 0:
+
+                if ent.rect.bottom < 0 or ent.rect.right < 0 or ent.rect.left > WIN_WIDTH:
                     remove_list.append(ent)
 
                 for enemy in self.entity_list:
+
                     if isinstance(enemy, Enemy):
+
                         if ent.rect.colliderect(enemy.rect):
                             remove_list.append(ent)
                             enemy.health -= 1
 
                             if enemy.health <= 0:
+                                self.explosion_sound.play()
                                 remove_list.append(enemy)
 
                                 if enemy.name == 'Enemy1':
                                     self.score += 100
+
                                 elif enemy.name == 'Enemy2':
                                     self.score += 500
 
             if isinstance(ent, Enemy):
+
                 if ent.rect.top > WINDOW_HEIGHT:
                     remove_list.append(ent)
                     self.base_health -= 1
@@ -118,19 +139,21 @@ class Level:
     def check_game_state(self):
         if self.base_health <= 0:
             self.game_over = True
+            pygame.mixer.music.stop()
 
         if self.score >= WIN_SCORE:
             self.win = True
+            pygame.mixer.music.stop()
 
     def draw_hud(self):
         self.draw_text(f'SCORE: {self.score}', (10, 10), COLOR_WHITE)
         self.draw_text(f'BASE: {self.base_health}', (10, 35), COLOR_WHITE)
 
         if self.win:
-            self.draw_text('MISSAO CUMPRIDA!', (150, WINDOW_HEIGHT // 2), COLOR_GREEN)
+            self.draw_text('MISSAO CUMPRIDA!', (145, WINDOW_HEIGHT // 2), COLOR_GREEN)
 
         if self.game_over:
-            self.draw_text('BASE DESTRUIDA!', (150, WINDOW_HEIGHT // 2), COLOR_RED)
+            self.draw_text('BASE DESTRUIDA!', (145, WINDOW_HEIGHT // 2), COLOR_RED)
 
     def draw_text(self, text, pos, color):
         font = pygame.font.SysFont('Arial', 22)

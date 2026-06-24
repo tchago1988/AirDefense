@@ -53,7 +53,7 @@ ENTITY_HEALTH = {
 # =========================
 
 BASE_HEALTH = 10
-WIN_SCORE = 1500
+WIN_SCORE = 8000
 
 # =========================
 # TURRET DIRECTIONS
