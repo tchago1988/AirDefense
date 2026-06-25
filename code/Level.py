@@ -52,7 +52,7 @@ class Level:
         if self.game_mode == 1:
             self.players.append(
                 Player(
-                    (WIN_WIDTH // 2, 620),
+                    (WIN_WIDTH // 2, 600),
                     PLAYER1_ROTATE_LEFT,
                     PLAYER1_ROTATE_RIGHT,
                     PLAYER1_SHOOT,
@@ -63,7 +63,7 @@ class Level:
         else:
             self.players.append(
                 Player(
-                    (180, 650),
+                    (190, 530),
                     PLAYER1_ROTATE_LEFT,
                     PLAYER1_ROTATE_RIGHT,
                     PLAYER1_SHOOT,
@@ -73,7 +73,7 @@ class Level:
 
             self.players.append(
                 Player(
-                    (396, 650),
+                    (391, 530),
                     PLAYER2_ROTATE_LEFT,
                     PLAYER2_ROTATE_RIGHT,
                     PLAYER2_SHOOT,

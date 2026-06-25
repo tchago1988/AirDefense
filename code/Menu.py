@@ -34,32 +34,8 @@ class Menu:
 
             self.window.blit(self.background, (0, 0))
 
-            for i, option in enumerate(MENU_OPTION):
-                if i == self.option:
-                    color = COLOR_GREEN
-                    text = f'> {option}'
-                else:
-                    color = COLOR_WHITE
-                    text = f'  {option}'
-
-                if option == 'EXIT' and i == self.option:
-                    color = COLOR_RED
-
-                self.draw_text(text, 38, color, (175, 330 + i * 70))
-
-            self.draw_text(
-                'UP / DOWN - NAVEGAR',
-                18,
-                COLOR_WHITE,
-                (155, 675)
-            )
-
-            self.draw_text(
-                'ENTER - CONFIRMAR',
-                18,
-                COLOR_YELLOW,
-                (180, 705)
-            )
+            self.draw_menu_options()
+            self.draw_footer()
 
             pygame.display.flip()
 
@@ -70,27 +46,60 @@ class Menu:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.option -= 1
-                        if self.option < 0:
-                            self.option = len(MENU_OPTION) - 1
+                        self.option = (self.option - 1) % len(MENU_OPTION)
 
                     elif event.key == pygame.K_DOWN:
-                        self.option += 1
-                        if self.option >= len(MENU_OPTION):
-                            self.option = 0
+                        self.option = (self.option + 1) % len(MENU_OPTION)
 
                     elif event.key == pygame.K_RETURN:
                         if self.option == 0:
                             return 1
 
-                        if self.option == 1:
+                        elif self.option == 1:
                             return 2
 
-                        if self.option == 2:
+                        elif self.option == 2:
                             pygame.quit()
                             sys.exit()
 
-    def draw_text(self, text, size, color, pos):
+    def draw_menu_options(self):
+        font = pygame.font.SysFont('Arial', 38, bold=True)
+
+        menu_y = [
+            330,  # 1 PLAYER
+            405,  # 2 PLAYERS
+            480,  # EXIT
+        ]
+
+        for i, option in enumerate(MENU_OPTION):
+            if i == self.option:
+                color = COLOR_RED if option == 'EXIT' else COLOR_GREEN
+                text = f'> {option}'
+            else:
+                color = COLOR_WHITE
+                text = f'  {option}'
+
+            surf = font.render(text, True, color)
+            x = (WIN_WIDTH - surf.get_width()) // 2
+            self.window.blit(surf, (x, menu_y[i]))
+
+    def draw_footer(self):
+        self.draw_text_center(
+            'UP / DOWN - NAVEGAR',
+            18,
+            COLOR_WHITE,
+            620
+        )
+
+        self.draw_text_center(
+            'ENTER - CONFIRMAR',
+            18,
+            COLOR_YELLOW,
+            645
+        )
+
+    def draw_text_center(self, text, size, color, y):
         font = pygame.font.SysFont('Arial', size, bold=True)
         surf = font.render(text, True, color)
-        self.window.blit(surf, pos)
+        x = (WIN_WIDTH - surf.get_width()) // 2
+        self.window.blit(surf, (x, y))
