@@ -7,6 +7,7 @@ import pygame
 from code.Cons import (
     WIN_WIDTH,
     WINDOW_HEIGHT,
+    FPS,
     COLOR_WHITE,
     COLOR_YELLOW,
     COLOR_GREEN,
@@ -19,7 +20,6 @@ class Menu:
     def __init__(self, window):
         self.window = window
         self.option = 0
-
         self.background = pygame.image.load('./asset/MenuBackground.png').convert()
         self.background = pygame.transform.scale(
             self.background,
@@ -28,47 +28,40 @@ class Menu:
 
     def run(self):
         clock = pygame.time.Clock()
+        pygame.mixer.music.load('./asset/Menu.mp3')  # Música do Menu
+        pygame.mixer.music.set_volume(0.50)
+        pygame.mixer.music.play(-1)
 
         while True:
-            clock.tick(60)
-
+            clock.tick(FPS)
             self.window.blit(self.background, (0, 0))
-
             self.draw_menu_options()
             self.draw_footer()
-
             pygame.display.flip()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
                     pygame.quit()
                     sys.exit()
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         self.option = (self.option - 1) % len(MENU_OPTION)
-
                     elif event.key == pygame.K_DOWN:
                         self.option = (self.option + 1) % len(MENU_OPTION)
-
                     elif event.key == pygame.K_RETURN:
-                        if self.option == 0:
-                            return 1
-
-                        elif self.option == 1:
-                            return 2
-
-                        elif self.option == 2:
-                            pygame.quit()
-                            sys.exit()
+                        # Faz uma transição suave para a música da fase
+                        pygame.mixer.music.fadeout(800)
+                        return MENU_OPTION[self.option]
 
     def draw_menu_options(self):
-        font = pygame.font.SysFont('Arial', 38, bold=True)
-
+        font = pygame.font.SysFont('Arial', 28, bold=True)
         menu_y = [
-            330,  # 1 PLAYER
-            405,  # 2 PLAYERS
-            480,  # EXIT
+            300,
+            365,
+            430,
+            495,
+            560,
         ]
 
         for i, option in enumerate(MENU_OPTION):
@@ -78,7 +71,6 @@ class Menu:
             else:
                 color = COLOR_WHITE
                 text = f'  {option}'
-
             surf = font.render(text, True, color)
             x = (WIN_WIDTH - surf.get_width()) // 2
             self.window.blit(surf, (x, menu_y[i]))
@@ -88,9 +80,7 @@ class Menu:
             'UP / DOWN - NAVEGAR',
             18,
             COLOR_WHITE,
-            620
-        )
-
+            620)
         self.draw_text_center(
             'ENTER - CONFIRMAR',
             18,

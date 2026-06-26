@@ -5,6 +5,7 @@ import math
 import pygame
 
 from code.Entity import Entity
+from code.Cons import ENTITY_SPEED, ENTITY_DAMAGE
 
 
 class Missile(Entity):
@@ -12,7 +13,8 @@ class Missile(Entity):
         super().__init__(name, position)
 
         self.owner = owner
-        self.speed = 10
+        self.speed = ENTITY_SPEED[self.name]
+        self.damage = ENTITY_DAMAGE[self.name]
         self.angle_degrees = angle_degrees
 
         self.surf = pygame.transform.scale(self.surf, (28, 56))
