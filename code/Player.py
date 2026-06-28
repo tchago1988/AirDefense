@@ -37,7 +37,7 @@ class Player(Entity):
             f'./asset/{self.name}_{self.direction}.png'
         ).convert_alpha()
 
-        self.surf = pygame.transform.scale(self.surf, (96, 96))
+        self.surf = pygame.transform.scale(self.surf, (72, 72))
         self.rect = self.surf.get_rect(center=center)
 
     def move(self):

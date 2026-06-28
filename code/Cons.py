@@ -24,7 +24,6 @@ MENU_OPTION = (
 
 ENEMY_EVENT = pygame.USEREVENT + 1
 
-BASE_HEALTH = 10
 DIR_CENTER = 2
 
 MISSILE_ANGLES = {
@@ -41,8 +40,10 @@ STAGES = {
         'backgrounds': ('Background',),
         'music': 'Level1.mp3',
         'duration': 20000,
-        'spawn_time': 1400,
+        'spawn_time': 1100,
         'enemy_types': ('Enemy1',),
+        'base_health_1p': 3,
+        'base_health_2p': 5,
         'next_stage': 2,
     },
 
@@ -51,8 +52,10 @@ STAGES = {
         'backgrounds': ('Background2',),
         'music': 'Level2.mp3',
         'duration': 30000,
-        'spawn_time': 1000,
+        'spawn_time': 950,
         'enemy_types': ('Enemy1', 'Enemy2'),
+        'base_health_1p': 4,
+        'base_health_2p': 6,
         'next_stage': 3,
     },
 
@@ -63,6 +66,8 @@ STAGES = {
         'duration': 40000,
         'spawn_time': 900,
         'enemy_types': ('Enemy1', 'Enemy2'),
+        'base_health_1p': 8,
+        'base_health_2p': 12,
         'next_stage': None,
     },
 }
