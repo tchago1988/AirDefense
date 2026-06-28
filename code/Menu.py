@@ -53,7 +53,6 @@ class Menu:  # Main game window where the menu is displayed.
 
     def draw_menu_options(self):  # Draws all menu options.
         font = pygame.font.SysFont('Arial', 28, bold=True)
-
         # Vertical position of each menu option.
         menu_y = [
             300,
@@ -73,6 +72,14 @@ class Menu:  # Main game window where the menu is displayed.
             # Center the option horizontally.
             x = (WIN_WIDTH - surf.get_width()) // 2
             self.window.blit(surf, (x, menu_y[i]))
+        # Draw the developer signature background.
+        box = pygame.Surface((340, 50))
+        box.set_alpha(150)
+        box.fill((0, 0, 0))
+        self.window.blit(box, (118, 555))
+        # Draw the developer signature below the menu.
+        self.draw_text_center('@ Desenvolvido por Tiago T. Cavalheiro', 14, (144, 238, 144), 560)
+        self.draw_text_center('RU1130178', 14, (144, 238, 144), 580)
 
     def draw_footer(self):  # Draws the menu instructions.
         self.draw_text_center('UP / DOWN - NAVEGAR', 18, COLOR_WHITE, 620)
