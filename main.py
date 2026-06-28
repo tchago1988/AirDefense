@@ -3,5 +3,5 @@
 
 from code.Game import Game
 
-game = Game()
-game.run()
+game = Game()  # Create the main game instance.
+game.run()  # Start the game loop.

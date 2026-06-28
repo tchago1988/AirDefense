@@ -14,10 +14,8 @@ from code.EnemyMissile import EnemyMissile
 from code.Explosion import Explosion
 
 class Level:
-    def __init__(self, window, game_mode, stage_number=1):
-        # Main game window where everything is drawn.
+    def __init__(self, window, game_mode, stage_number=1): # Main game window where everything is drawn.
         self.window = window
-
         # Selected game mode from the menu.
         self.game_mode = game_mode
         self.stage_manager = StageManager(stage_number)
@@ -59,9 +57,7 @@ class Level:
             pygame.mixer.Channel(1),
             pygame.mixer.Channel(2),
             pygame.mixer.Channel(3),
-            pygame.mixer.Channel(4),
-        ]
-
+            pygame.mixer.Channel(4),]
         # Channels used for explosion sounds.
         self.explosion_channels = [
             pygame.mixer.Channel(5),
@@ -70,7 +66,6 @@ class Level:
             pygame.mixer.Channel(8),
             pygame.mixer.Channel(9),
             pygame.mixer.Channel(10), ]
-
         # Indexes used to rotate between sound channels.
         self.current_shoot_channel = 0
         self.current_explosion_channel = 0
@@ -102,17 +97,14 @@ class Level:
             player.rect.centerx = WIN_WIDTH // 2
             player.rect.bottom = WINDOW_HEIGHT - 95
             self.players.append(player)
-
         else:
             # Player2 mode.
-            # Player 2 starts on the left side.
+            # Player2 starts on the left side.
             player2 = EntityFactory.get_entity('Player2')
             player2.rect.center = (int(WIN_WIDTH * 0.30), WINDOW_HEIGHT - 130)
-
-            # Player 1 starts on the right side.
+            # Player1 starts on the right side.
             player1 = EntityFactory.get_entity('Player1')
             player1.rect.center = (int(WIN_WIDTH * 0.70), WINDOW_HEIGHT - 130)
-
             self.players.append(player2)
             self.players.append(player1)
 
@@ -131,17 +123,14 @@ class Level:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
                 if event.type == pygame.KEYDOWN:
                     # ESC returns to the menu.
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.stop()
                         return 'menu'
-
                     # P pauses or resumes the game.
                     if event.key == pygame.K_p:
                         self.toggle_pause()
-
                 # Enemy spawn event.
                 if (event.type == ENEMY_EVENT
                         and not self.game_over
@@ -152,7 +141,6 @@ class Level:
                     enemy = EntityFactory.get_entity(enemy_name)
                     if enemy:
                         self.entity_list.append(enemy)
-
             # If the game is paused, only draw the pause screen.
             if self.paused:
                 self.draw_entities()
@@ -160,14 +148,12 @@ class Level:
                 self.draw_pause()
                 pygame.display.flip()
                 continue
-
             # Normal gameplay update.
             if not self.game_over and not self.win:
                 self.update_players()
                 self.update_entities()
                 self.check_collisions()
                 self.check_game_state()
-
             else:
                 # After win or game over, wait for ENTER.
                 self.draw_entities()
@@ -228,7 +214,6 @@ class Level:
                         or ent.rect.right < 0
                         or ent.rect.left > WIN_WIDTH):
                     remove_list.append(ent)
-
                 # Player missile hitting enemies.
                 for enemy in self.entity_list:
                     if isinstance(enemy, Enemy):
@@ -247,7 +232,6 @@ class Level:
                                     self.score_p1 += points
                                 elif ent.owner == 'Player2':
                                     self.score_p2 += points
-
                 # Player missile hitting enemy missile.
                 for enemy_missile in self.entity_list:
                     if isinstance(enemy_missile, EnemyMissile):
@@ -258,7 +242,6 @@ class Level:
                             self.play_explosion_sound()
                             self.entity_list.append(
                                 Explosion('Explosion', enemy_missile.rect.center))
-
             # Enemy missile logic.
             if isinstance(ent, EnemyMissile):
                 # Remove enemy missiles that leave the screen.
@@ -267,14 +250,12 @@ class Level:
                         or ent.rect.right < 0
                         or ent.rect.left > WIN_WIDTH):
                     remove_list.append(ent)
-
                 # Enemy missile hitting a player.
                 for player in self.players:
                     if ent.rect.colliderect(player.rect):
                         remove_list.append(ent)
                         # In this version, enemy missiles damage the base.
                         self.base_health -= ent.damage
-
             # Enemy crossing the bottom of the screen.
             if isinstance(ent, Enemy):
                 if ent.rect.top > WINDOW_HEIGHT:
@@ -282,12 +263,10 @@ class Level:
                     # Every enemy that passes reduces base health.
                     self.base_health -= 1
                     self.enemy_success += 1
-
             # Remove finished explosion animations.
             if isinstance(ent, Explosion):
                 if ent.health <= 0:
                     remove_list.append(ent)
-
         # Remove entities safely after collision checks.
         for ent in remove_list:
             if ent in self.entity_list:
@@ -298,7 +277,6 @@ class Level:
             self.game_over = True
             pygame.mixer.music.stop()
             pygame.time.set_timer(ENEMY_EVENT, 0)
-
         if self.stage_manager.is_stage_finished():
             # Victory only happens if the base is alive
             # and no enemy has passed through the defense.
@@ -357,7 +335,6 @@ class Level:
                 'BASE DESTROYED!',
                 WINDOW_HEIGHT // 2,
                 COLOR_RED)
-
             self.draw_text_center(
                 'ENTER - RESULT',
                 WINDOW_HEIGHT // 2 + 35,
